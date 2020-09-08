@@ -1,17 +1,36 @@
-import React from 'react';
-import City from './city';
+import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-const CityList = (props) => {
-  const { cities, selectFunction } = props;
-  return (
-    <div className="city-list">
-      {cities.map((city) => {
-        return (
-          <City city={city} selectFunction={selectFunction} />
-        );
-      })}
-    </div>
+import City from './city';
+import { setCities } from '../actions';
+
+
+class CityList extends Component {
+  componentWillMount() {
+    this.props.setCities();
+  }
+
+  render() {
+    return (
+      <div className="city-list">
+        {this.props.cities.map(city => <City city={city} key={city.name} />)}
+      </div>
+    );
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators(
+    { setCities },
+    dispatch
   );
 };
 
-export default CityList;
+const mapReduxStateToProps = (reduxState) => {
+  return {
+    cities: reduxState.cities
+  };
+};
+
+export default connect(mapReduxStateToProps, mapDispatchToProps)(CityList);
